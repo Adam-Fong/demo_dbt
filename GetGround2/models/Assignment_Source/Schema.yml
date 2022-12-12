@@ -1,0 +1,206 @@
+version: 2
+
+models:
+  - name: staging_partners
+    description: "Raw data partners"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: "When the record was created. Unix Nano format"
+        tests:
+          - not_null
+      - name: updated_at
+        description: "When the record was updated. Unix Nano format"
+        tests:
+          - not_null
+      - name: partner_type
+        description: "Categorisation of the partner"
+      - name: lead_sales_contact
+        description: "Foreign key linking to Partner table"
+
+  - name: staging_sales_people
+    description: "Raw data sales people"
+    columns:
+      - name: name
+        description: "name of sales person"
+        tests:
+          - not_null
+          - unique
+      - name: country
+        description: "name of country the sales person supports"
+        tests:
+          - not_null
+
+  - name: staging_referrals
+    description: "Raw data referrals"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: "When the record was created. Unix Nano format"
+        tests:
+          - not_null
+      - name: updated_at
+        description: "when the status went from pending to either disinterested or successful. Unix Nano format"
+        tests:
+          - not_null
+      - name: company_id
+        description: "ID of the asset company"
+        tests:
+          - not_null
+      - name: partner_id
+        description: "partner id"
+
+      - name: consultant_id
+        description: "consultant_id"
+
+      - name: status
+        description: "status of the referral"
+        tests:
+          - accepted_values:
+              values: ['pending', 'disinterested', 'successful']  
+      - name: is_outbound 
+        description: "true when we refer a customer to a partner, i.e. upsell. In this case we send them the customer, and they pay us a commission"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              quote: false
+
+  - name: intermediate_partners
+    description: "processed partner data. date format converted"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: "When the record was created."
+        tests:
+          - not_null
+      - name: updated_at
+        description: "When the record was updated."
+        tests:
+          - not_null
+      - name: partner_type
+        description: "Categorisation of the partner"
+      - name: data_pulled
+        description: "Date the data was pulled and loaded"
+
+  - name: intermediate_sales_people
+    description: "processed data sales people"
+    columns:
+      - name: name
+        description: "name of sales person"
+        tests:
+          - not_null
+          - unique
+      - name: country
+        description: "name of country the sales person supports"
+        tests:
+          - not_null
+      - name: data_pulled
+        description: "Date the data was pulled and loaded"
+
+  - name: staging_referrals
+    description: "processed data referrals"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: created_at
+        description: "When the record was created."
+        tests:
+          - not_null
+      - name: updated_at
+        description: "when the status went from pending to either disinterested or successful."
+        tests:
+          - not_null
+      - name: company_id
+        description: "ID of the asset company"
+        tests:
+          - not_null
+      - name: partner_id
+        description: "partner id"
+
+      - name: consultant_id
+        description: "consultant_id"
+
+      - name: status
+        description: "status of the referral"
+        tests:
+          - accepted_values:
+              values: ['pending', 'disinterested', 'successful']  
+      - name: is_outbound 
+        description: "true when we refer a customer to a partner, i.e. upsell. In this case we send them the customer, and they pay us a commission"
+        tests:
+          - accepted_values:
+              values: [0, 1]
+              quote: false
+      - name: data_pulled
+        description: "Date the data was pulled and loaded"
+
+  - name: mart_full_referrals
+    description: "model ready for analysis"
+    columns:
+      - name: referral_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: ref_created_at
+        description: "When the record was created."
+        tests:
+          - not_null
+      - name: ref_status_updated_at
+        description: "when the status went from pending to either disinterested or successful."
+        tests:
+          - not_null
+      - name: ref_company_id
+        description: "ID of the asset company"
+        tests:
+          - not_null
+      - name: partner_id
+        description: "partner id"
+
+      - name: ref_consultant_id
+        description: "consultant_id"
+
+      - name: ref_status
+        description: "status of the referral"
+        tests:
+          - accepted_values:
+              values: ['pending', 'disinterested', 'successful']  
+
+      - name: is_outbound 
+        description: "true when we refer a customer to a partner, i.e. upsell. In this case we send them the customer, and they pay us a commission"
+
+      - name: partner_start_date
+        description: "When the partner was created."
+        tests:
+          - not_null
+
+      - name: partner_type
+        description: "Categorisation of the partner"
+
+      - name: name
+        description: "name of sales person - becomes inactive if sales person leaves"
+        tests:
+          - not_null
+          - unique
+      - name: country
+        description: "name of country the sales person supports - becomes unassigned if sales person leaves"
+        tests:
+          - not_null
+      - name: data_pulled
+        description: "Date the data was pulled and loaded"
+
